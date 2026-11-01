@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>لوحة القيادة والتحليل الإحصائي | رواد بيوت الشباب</title>
+  <title>احصائيات المنخرطين | رواد بيوت الشباب</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -16,41 +16,64 @@
       --gold-light: #d4ae56;
       --bg: #f0f4f3;
     }
+
     body {
       font-family: 'IBM Plex Sans Arabic', sans-serif;
       background: var(--bg);
       color: #1e293b;
     }
-    h1, h2, h3, h4 { font-family: 'Amiri', serif; }
+
+    h1, h2, h3, h4 {
+      font-family: 'Amiri', serif;
+    }
+
     .hide { display: none !important; }
+
     .glass {
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
+
     .premium-card {
       background: white;
       border-radius: 1.5rem;
       border: 1px solid rgba(5, 56, 43, 0.08);
-      box-shadow: 0 4px 24px -4px rgba(5, 56, 43, 0.06), 0 1px 3px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 24px -4px rgba(5, 56, 43, 0.06),
+                  0 1px 3px rgba(0,0,0,0.04);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
     .premium-card:hover {
-      box-shadow: 0 12px 40px -8px rgba(5, 56, 43, 0.12), 0 4px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 12px 40px -8px rgba(5, 56, 43, 0.12),
+                  0 4px 12px rgba(0,0,0,0.05);
       transform: translateY(-2px);
     }
-    .stat-number { letter-spacing: -0.03em; }
+
+    .stat-number {
+      letter-spacing: -0.03em;
+    }
+
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
     ::-webkit-scrollbar-thumb { background: #0c5a45; border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: #05382b; }
-    .member-row { transition: background 0.2s ease; cursor: pointer; }
-    .member-row:hover { background: linear-gradient(90deg, rgba(5,56,43,0.03), transparent); }
+
+    .member-row {
+      transition: background 0.2s ease;
+    }
+    .member-row:hover {
+      background: linear-gradient(90deg, rgba(5,56,43,0.03), transparent);
+    }
+
     @keyframes modalIn {
       from { opacity: 0; transform: scale(0.96) translateY(12px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
-    .modal-content { animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+    .modal-content {
+      animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
     .btn-primary {
       background: linear-gradient(135deg, #05382b 0%, #0c5a45 100%);
       position: relative;
@@ -64,13 +87,20 @@
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
       transition: 0.5s;
     }
-    .btn-primary:hover::after { left: 100%; }
+    .btn-primary:hover::after {
+      left: 100%;
+    }
+
     @media print {
       body * { visibility: hidden; }
       #memberDetailsModal, #memberDetailsModal * { visibility: visible; }
       #memberDetailsModal {
-        position: fixed; inset: 0; background: #fff;
-        display: block !important; padding: 0; margin: 0;
+        position: fixed;
+        inset: 0;
+        background: #fff;
+        display: block !important;
+        padding: 0;
+        margin: 0;
       }
       .no-print { display: none !important; }
     }
@@ -78,54 +108,66 @@
 </head>
 <body class="antialiased">
 
-  <!-- ==================== بوابة الدخول ==================== -->
+  <!-- بوابة الدخول -->
   <div id="loginGate" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
        style="background: linear-gradient(145deg, rgba(3, 28, 21, 0.97), rgba(5, 56, 43, 0.93)), url('https://lh3.googleusercontent.com/d/1NwCLWEE5RSeBavtK0b_7-mvmlt14xTnu') center/cover no-repeat fixed;">
+
     <div class="absolute inset-0 opacity-20 pointer-events-none">
       <div class="absolute top-20 right-20 w-72 h-72 rounded-full bg-[#a67c2e] blur-[120px]"></div>
       <div class="absolute bottom-32 left-16 w-96 h-96 rounded-full bg-[#0c5a45] blur-[140px]"></div>
     </div>
+
     <div class="glass p-8 sm:p-11 rounded-[2rem] shadow-2xl w-full max-w-md border border-white/40 text-center relative z-10">
+      
       <div class="relative w-28 h-28 mx-auto mb-6">
         <div class="absolute inset-0 rounded-full bg-gradient-to-br from-[#a67c2e] to-[#d4ae56] opacity-30 blur-md"></div>
         <div class="relative w-full h-full rounded-full p-1.5 border-2 border-[#a67c2e]/60 shadow-xl bg-white flex items-center justify-center overflow-hidden">
-          <img src="https://lh3.googleusercontent.com/d/1NwCLWEE5RSeBavtK0b_7-mvmlt14xTnu" alt="شعار الجمعية" class="w-full h-full object-cover rounded-full"
-               onerror="this.style.display='none'">
+          <img src="https://lh3.googleusercontent.com/d/1NwCLWEE5RSeBavtK0b_7-mvmlt14xTnu" alt="شعار الجمعية" class="w-full h-full object-cover rounded-full">
         </div>
       </div>
+
       <div class="text-[11px] font-semibold tracking-[0.2em] text-[#a67c2e] mb-2 uppercase">الجمهورية الجزائرية الديمقراطية الشعبية</div>
       <h2 class="text-2xl sm:text-3xl font-bold text-[#05382b] leading-tight mb-1">الجمعية الوطنية<br>لرواد بيوت الشباب</h2>
       <p class="text-xs text-slate-500 mb-8 font-medium tracking-wide">لوحة القيادة المركزية • إدارة النظام</p>
+      
       <div class="relative mb-5">
         <input type="password" id="adminPass" placeholder="رمز الدخول السري"
-               class="w-full bg-slate-50/80 border-2 border-slate-200/80 rounded-2xl px-5 py-4 outline-none focus:border-[#05382b] focus:bg-white text-center text-xl font-bold tracking-[0.35em] transition-all shadow-inner placeholder:tracking-normal placeholder:font-medium placeholder:text-slate-400"
-               onkeydown="if(event.key==='Enter')checkAuth()">
+               class="w-full bg-slate-50/80 border-2 border-slate-200/80 rounded-2xl px-5 py-4 outline-none focus:border-[#05382b] focus:bg-white text-center text-xl font-bold tracking-[0.35em] transition-all shadow-inner placeholder:tracking-normal placeholder:font-medium placeholder:text-slate-400">
       </div>
+
       <button onclick="checkAuth()" class="btn-primary w-full text-white py-4 rounded-2xl font-bold text-[15px] tracking-wide shadow-lg shadow-[#05382b]/25 hover:shadow-xl hover:shadow-[#05382b]/30 transition-all duration-300">
         دخول المنظومة
       </button>
+
       <p id="authErr" class="text-rose-600 text-xs font-bold mt-4 hide flex items-center justify-center gap-1.5">
-        رمز الدخول غير صحيح، يرجى المحاولة ثانية
+        <span>⚠</span> رمز الدخول غير صحيح، يرجى المحاولة ثانية
       </p>
     </div>
   </div>
 
-  <!-- ==================== المنظومة الرئيسية ==================== -->
+  <!-- المنظومة الرئيسية -->
   <div id="dashboardApp" class="hide min-h-screen p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
+
+    <!-- الشريط العلوي -->
     <header class="premium-card p-5 sm:p-6 mb-7 flex flex-wrap justify-between items-center gap-4">
       <div class="flex items-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#05382b] to-[#0c5a45] text-white flex items-center justify-center text-2xl shadow-lg shadow-[#05382b]/20">📊</div>
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#05382b] to-[#0c5a45] text-white flex items-center justify-center text-2xl shadow-lg shadow-[#05382b]/20">
+          📈
+        </div>
         <div>
-          <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-[#05382b] leading-tight">المركز الوطني لتحليل العضويات</h1>
+          <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-[#05382b] leading-tight">احصائيات المنخرطين</h1>
           <p class="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">إحصائيات آنية • مؤشرات ديموغرافية • إدارة السجل</p>
         </div>
       </div>
+
       <div class="flex items-center gap-3">
         <button onclick="fetchMembers()" class="bg-slate-50 border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100 hover:border-slate-300 flex items-center gap-2 transition-all">
-          <span>🔄</span><span class="hidden sm:inline">تحديث فوري</span>
+          <span class="text-base">🔄</span>
+          <span class="hidden sm:inline">تحديث فوري</span>
         </button>
         <button onclick="exportCSV()" class="btn-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-md shadow-[#05382b]/20 hover:shadow-lg transition-all">
-          <span>📥</span><span>تصدير Excel</span>
+          <span>📥</span>
+          <span>تصدير Excel</span>
         </button>
       </div>
     </header>
@@ -141,18 +183,21 @@
           <span class="text-[11px] text-emerald-600 font-semibold">تدفق مباشر ومحدث</span>
         </div>
       </div>
+
       <div class="premium-card p-5 sm:p-6 relative overflow-hidden">
         <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#a67c2e] to-[#d4ae56]"></div>
         <div class="text-slate-400 text-[11px] font-bold tracking-wider mb-1">متوسط الأعمار</div>
         <h3 id="statAvgAge" class="stat-number text-3xl sm:text-4xl font-black text-[#a67c2e]">--</h3>
-        <span id="statYouthRatio" class="text-[11px] text-slate-500 font-medium mt-2 block">الفئة الغالبة: —</span>
+        <span id="statYouthRatio" class="text-[11px] text-slate-500 font-medium mt-2 block">الفئة الغالبة: شباب</span>
       </div>
+
       <div class="premium-card p-5 sm:p-6 relative overflow-hidden">
         <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#0c5a45] to-[#4fd1a1]"></div>
         <div class="text-slate-400 text-[11px] font-bold tracking-wider mb-1">الولاية الأكثر نشاطاً</div>
         <h3 id="statTopWilaya" class="stat-number text-xl sm:text-2xl font-black text-[#0c5a45] truncate mt-1">--</h3>
         <span id="statTopWilayaCount" class="text-[11px] text-slate-500 font-medium mt-2 block">0 تسجيلات</span>
       </div>
+
       <div class="premium-card p-5 sm:p-6 relative overflow-hidden">
         <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-700 to-indigo-400"></div>
         <div class="text-slate-400 text-[11px] font-bold tracking-wider mb-1">التخصص الأكثر تسجيلاً</div>
@@ -165,31 +210,54 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 mb-7">
       <div class="premium-card p-5 sm:p-6">
         <div class="flex justify-between items-center mb-5">
-          <h3 class="text-base sm:text-lg font-bold text-[#05382b]">أكثر الولايات تسجيلاً</h3>
+          <h3 class="text-base sm:text-lg font-bold text-[#05382b] flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-[#05382b]/10 flex items-center justify-center text-sm">📍</span>
+            أكثر الولايات تسجيلاً
+          </h3>
           <span class="text-[11px] text-slate-400 font-medium bg-slate-50 px-2.5 py-1 rounded-lg">Top 8</span>
         </div>
-        <div class="relative h-64"><canvas id="wilayaChart"></canvas></div>
+        <div class="relative h-64">
+          <canvas id="wilayaChart"></canvas>
+        </div>
       </div>
+
       <div class="premium-card p-5 sm:p-6">
         <div class="flex justify-between items-center mb-5">
-          <h3 class="text-base sm:text-lg font-bold text-[#05382b]">التوزيع حسب الفئات العمرية</h3>
+          <h3 class="text-base sm:text-lg font-bold text-[#05382b] flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-[#a67c2e]/10 flex items-center justify-center text-sm">🎂</span>
+            التوزيع حسب الفئات العمرية
+          </h3>
           <span class="text-[11px] text-slate-400 font-medium bg-slate-50 px-2.5 py-1 rounded-lg">معدلات الشباب</span>
         </div>
-        <div class="relative h-64 flex justify-center"><canvas id="ageChart"></canvas></div>
+        <div class="relative h-64 flex justify-center">
+          <canvas id="ageChart"></canvas>
+        </div>
       </div>
+
       <div class="premium-card p-5 sm:p-6">
         <div class="flex justify-between items-center mb-5">
-          <h3 class="text-base sm:text-lg font-bold text-[#05382b]">التوزيع حسب المستوى الأكاديمي</h3>
+          <h3 class="text-base sm:text-lg font-bold text-[#05382b] flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-sm">🎓</span>
+            التوزيع حسب المستوى الأكاديمي
+          </h3>
           <span class="text-[11px] text-slate-400 font-medium bg-slate-50 px-2.5 py-1 rounded-lg">نسب الشهادات</span>
         </div>
-        <div class="relative h-64 flex justify-center"><canvas id="eduChart"></canvas></div>
+        <div class="relative h-64 flex justify-center">
+          <canvas id="eduChart"></canvas>
+        </div>
       </div>
+
       <div class="premium-card p-5 sm:p-6">
         <div class="flex justify-between items-center mb-5">
-          <h3 class="text-base sm:text-lg font-bold text-[#05382b]">أكثر التخصصات والمهارات</h3>
+          <h3 class="text-base sm:text-lg font-bold text-[#05382b] flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-[#a67c2e]/10 flex items-center justify-center text-sm">💼</span>
+            أكثر التخصصات والمهارات
+          </h3>
           <span class="text-[11px] text-slate-400 font-medium bg-slate-50 px-2.5 py-1 rounded-lg">تنوع الطاقات</span>
         </div>
-        <div class="relative h-64"><canvas id="specialtyChart"></canvas></div>
+        <div class="relative h-64">
+          <canvas id="specialtyChart"></canvas>
+        </div>
       </div>
     </div>
 
@@ -211,6 +279,7 @@
           </select>
         </div>
       </div>
+
       <div class="overflow-x-auto rounded-xl border border-slate-100">
         <table class="w-full text-right text-sm">
           <thead>
@@ -232,7 +301,7 @@
               <td colspan="10" class="p-12 text-center text-slate-400">
                 <div class="flex flex-col items-center gap-3">
                   <div class="w-10 h-10 border-2 border-[#05382b]/20 border-t-[#05382b] rounded-full animate-spin"></div>
-                  <span>جاري الاتصال بالسجلات...</span>
+                  <span>جاري الاتصال بالسجلات وقراءة الرسوم البيانية...</span>
                 </div>
               </td>
             </tr>
@@ -242,48 +311,75 @@
     </div>
   </div>
 
-  <!-- ==================== نافذة تفاصيل العضو ==================== -->
+  <!-- نافذة تفاصيل المنخرط -->
   <div id="memberDetailsModal" class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 hide overflow-y-auto">
     <div class="modal-content bg-white rounded-[1.75rem] p-6 sm:p-8 max-w-2xl w-full border border-[#a67c2e]/30 shadow-2xl relative my-auto">
+      
       <div class="no-print flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
         <span class="text-xs font-bold text-slate-400 tracking-wide">تفاصيل ملف المنخرط الرسمي</span>
         <button onclick="closeMemberModal()" class="w-9 h-9 rounded-full bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 font-bold text-lg transition flex items-center justify-center">✕</button>
       </div>
+
       <div class="text-center mb-7">
-        <div class="text-[11px] font-bold text-slate-400 tracking-widest mb-3">الجمهورية الجزائرية الديمقراطية الشعبية</div>
-        <div class="flex items-center justify-center gap-3 mb-2">
-          <img src="https://lh3.googleusercontent.com/d/1NwCLWEE5RSeBavtK0b_7-mvmlt14xTnu" alt="شعار الجمعية"
-               class="w-14 h-14 rounded-full object-cover border-2 border-[#a67c2e]/50 shadow-md bg-white"
-               onerror="this.style.display='none'">
-          <h2 class="text-xl sm:text-2xl font-bold text-[#05382b] leading-tight text-right">الجمعية الوطنية<br>لرواد بيوت الشباب</h2>
-        </div>
+        <div class="text-[11px] font-bold text-slate-400 tracking-widest">الجمهورية الجزائرية الديمقراطية الشعبية</div>
+        <h2 class="text-2xl font-bold text-[#05382b] mt-1">الجمعية الوطنية لرواد بيوت الشباب</h2>
         <p class="text-xs text-[#a67c2e] font-semibold mt-1">استمارة وبطاقة الانخراط الرقمية • الموسم 2026</p>
       </div>
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         <div class="bg-gradient-to-b from-[#fffdf8] to-[#faf6eb] border-2 border-[#a67c2e]/40 rounded-2xl p-5 text-center shadow-sm">
-          <div id="memberQrCode" class="flex justify-center items-center p-2 bg-white rounded-xl mx-auto mb-3 shadow-inner" style="width:160px;height:160px;min-height:160px"></div>
+          <div id="memberQrCode" class="flex justify-center p-2 bg-white rounded-xl mx-auto mb-3 shadow-inner max-w-[150px]"></div>
           <div class="text-[13px] font-bold text-[#05382b]">بطاقة الانخراط الرقمية</div>
           <div id="modalRefId" class="text-xs font-bold text-slate-500 tracking-wider mt-1.5">--</div>
         </div>
+
         <div class="md:col-span-2 overflow-hidden rounded-2xl border border-slate-100">
           <table class="w-full text-right text-xs sm:text-sm">
             <tbody class="divide-y divide-slate-100">
-              <tr class="bg-slate-50/60"><td class="p-3 font-bold text-slate-500 w-[38%]">الاسم واللقب</td><td id="dFullName" class="p-3 font-black text-[#05382b]">--</td></tr>
-              <tr><td class="p-3 font-bold text-slate-500">العمر وتاريخ الميلاد</td><td id="dBirth" class="p-3 font-semibold text-slate-800">--</td></tr>
-              <tr class="bg-slate-50/60"><td class="p-3 font-bold text-slate-500">مكان الميلاد</td><td id="dBirthPlace" class="p-3 font-semibold text-slate-800">--</td></tr>
-              <tr><td class="p-3 font-bold text-slate-500">الإقامة الحالية</td><td id="dResidence" class="p-3 font-semibold text-slate-800">--</td></tr>
-              <tr class="bg-slate-50/60"><td class="p-3 font-bold text-slate-500">رقم الهاتف</td><td id="dPhone" class="p-3 font-mono font-bold text-[#05382b]" dir="ltr">--</td></tr>
-              <tr><td class="p-3 font-bold text-slate-500">البريد الإلكتروني</td><td id="dEmail" class="p-3 font-mono text-slate-700 text-xs" dir="ltr">--</td></tr>
-              <tr class="bg-slate-50/60"><td class="p-3 font-bold text-slate-500">المستوى والتخصص</td><td id="dEdu" class="p-3 font-semibold text-slate-800">--</td></tr>
-              <tr><td class="p-3 font-bold text-slate-500">المهنة الحالية</td><td id="dJob" class="p-3 font-semibold text-slate-800">--</td></tr>
-              <tr class="bg-slate-50/60"><td class="p-3 font-bold text-slate-500">توقيت التسجيل</td><td id="dTimestamp" class="p-3 text-slate-500 text-xs">--</td></tr>
+              <tr class="bg-slate-50/60">
+                <td class="p-3 font-bold text-slate-500 w-[38%]">الاسم واللقب</td>
+                <td id="dFullName" class="p-3 font-black text-[#05382b]">--</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-slate-500">العمر وتاريخ الميلاد</td>
+                <td id="dBirth" class="p-3 font-semibold text-slate-800">--</td>
+              </tr>
+              <tr class="bg-slate-50/60">
+                <td class="p-3 font-bold text-slate-500">مكان الميلاد</td>
+                <td id="dBirthPlace" class="p-3 font-semibold text-slate-800">--</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-slate-500">الإقامة الحالية</td>
+                <td id="dResidence" class="p-3 font-semibold text-slate-800">--</td>
+              </tr>
+              <tr class="bg-slate-50/60">
+                <td class="p-3 font-bold text-slate-500">رقم الهاتف</td>
+                <td id="dPhone" class="p-3 font-mono font-bold text-[#05382b]" dir="ltr">--</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-slate-500">البريد الإلكتروني</td>
+                <td id="dEmail" class="p-3 font-mono text-slate-700 text-xs" dir="ltr">--</td>
+              </tr>
+              <tr class="bg-slate-50/60">
+                <td class="p-3 font-bold text-slate-500">المستوى والتخصص</td>
+                <td id="dEdu" class="p-3 font-semibold text-slate-800">--</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-slate-500">المهنة الحالية</td>
+                <td id="dJob" class="p-3 font-semibold text-slate-800">--</td>
+              </tr>
+              <tr class="bg-slate-50/60">
+                <td class="p-3 font-bold text-slate-500">توقيت التسجيل</td>
+                <td id="dTimestamp" class="p-3 text-slate-500 text-xs">--</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
+
       <div class="no-print mt-7 pt-5 border-t border-slate-100 flex gap-3">
         <button onclick="window.print()" class="btn-primary flex-1 text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-md shadow-[#05382b]/20">
-          طباعة بطاقة واستمارة العضو
+          🖨️ طباعة بطاقة واستمارة العضو
         </button>
         <button onclick="closeMemberModal()" class="bg-slate-100 text-slate-600 px-6 py-3.5 rounded-xl font-bold text-sm hover:bg-slate-200 transition">
           إغلاق
@@ -293,366 +389,164 @@
   </div>
 
   <script>
-    /* ========== الإعدادات ========== */
     const ADMIN_PASSWORD = "0000";
-    // رابط Google Apps Script المتصل بجدول الأعضاء
-    const API_URL = "https://script.google.com/macros/s/AKfycbzLAJYwuSNeC8vasqjqPCUvljQmJsgGNsfTTSrKQsyVcPIleppVdDA0LbhXaeB_EU7X/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbynNwsAeNtAXdqb-vXTbqOQlgQ1gFYgUyWzNa4neY9vfpxeFbaeialyx1BTrTg6g3zpMrA/exec";
 
-    let allMembers = [];
-    let filteredMembers = [];
-    let charts = { wilaya: null, age: null, edu: null, specialty: null };
+    let rawMembers = [];
+    let charts = {};
 
-    /* ========== المصادقة ========== */
     function checkAuth() {
-      const pass = (document.getElementById('adminPass').value || '').trim();
-      const err = document.getElementById('authErr');
+      const pass = document.getElementById('adminPass').value;
       if (pass === ADMIN_PASSWORD) {
-        err.classList.add('hide');
         document.getElementById('loginGate').classList.add('hide');
         document.getElementById('dashboardApp').classList.remove('hide');
-        try { sessionStorage.setItem('ruwad_auth', '1'); } catch(e) {}
         fetchMembers();
       } else {
-        err.classList.remove('hide');
-        document.getElementById('adminPass').value = '';
-        document.getElementById('adminPass').focus();
+        document.getElementById('authErr').classList.remove('hide');
+        document.getElementById('adminPass').classList.add('border-rose-400');
+        setTimeout(() => document.getElementById('adminPass').classList.remove('border-rose-400'), 1500);
       }
     }
 
-    /* ========== بيانات تجريبية (تُستخدم إذا لم يوجد API) ========== */
-    function getDemoData() {
-      const wilayas = ['الجزائر','وهران','قسنطينة','عنابة','سطيف','باتنة','تيزي وزو','بجاية','البليدة','تلمسان'];
-      const specs = ['إعلام آلي','طب','هندسة مدنية','قانون','اقتصاد','لغة إنجليزية','تربية بدنية','صيدلة','عمارة','إدارة أعمال'];
-      const levels = ['ثانوي','ليسانس','ماستر','دكتوراه','تكوين مهني'];
-      const jobs = ['طالب','موظف','عاطل','تاجر','مهندس','أستاذ','طبيب','حرفي'];
-      const firsts = ['أحمد','محمد','يوسف','أمين','خالد','سارة','مريم','فاطمة','نادية','ياسين','إلياس','سمية'];
-      const lasts = ['بن علي','بوزيد','حسين','عمار','بوخاري','زروقي','بلقاسم','خليفي','منصوري','براهمي'];
-      const data = [];
-      for (let i = 0; i < 48; i++) {
-        const y = 1995 + Math.floor(Math.random() * 15);
-        const m = String(1 + Math.floor(Math.random() * 12)).padStart(2, '0');
-        const d = String(1 + Math.floor(Math.random() * 28)).padStart(2, '0');
-        const birth = y + '-' + m + '-' + d;
-        const age = new Date().getFullYear() - y;
-        data.push({
-          id: 'RW-' + String(1000 + i),
-          fullName: firsts[i % firsts.length] + ' ' + lasts[i % lasts.length],
-          birthDate: birth,
-          age: age,
-          birthPlace: wilayas[Math.floor(Math.random() * wilayas.length)],
-          wilaya: wilayas[Math.floor(Math.random() * wilayas.length)],
-          residence: wilayas[Math.floor(Math.random() * wilayas.length)],
-          phone: '05' + String(50000000 + Math.floor(Math.random() * 49999999)),
-          email: 'member' + (i + 1) + '@example.dz',
-          education: levels[Math.floor(Math.random() * levels.length)],
-          specialty: specs[Math.floor(Math.random() * specs.length)],
-          job: jobs[Math.floor(Math.random() * jobs.length)],
-          timestamp: new Date(Date.now() - Math.random() * 90 * 86400000).toISOString()
-        });
-      }
-      return data;
-    }
+    document.getElementById('adminPass').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkAuth();
+    });
 
-    /* ========== جلب البيانات ========== */
-    async function fetchMembers() {
+    function fetchMembers() {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = `<tr><td colspan="10" class="p-12 text-center text-slate-400">
         <div class="flex flex-col items-center gap-3">
           <div class="w-10 h-10 border-2 border-[#05382b]/20 border-t-[#05382b] rounded-full animate-spin"></div>
-          <span>جاري الاتصال بالسجلات الحقيقية...</span>
-        </div></td></tr>`;
+          <span>جاري تحديث البيانات...</span>
+        </div>
+      </td></tr>`;
 
-      let loaded = false;
-      try {
-        if (API_URL && API_URL.length > 20) {
-          // محاولات متعددة لصيغة الـ API الشائعة
-          const urls = [
-            API_URL,
-            API_URL + (API_URL.includes('?') ? '&' : '?') + 'action=list',
-            API_URL + (API_URL.includes('?') ? '&' : '?') + 'action=getAll',
-            API_URL + (API_URL.includes('?') ? '&' : '?') + 'mode=json'
-          ];
-          let lastErr = null;
-          for (const url of urls) {
-            try {
-              const res = await fetch(url, { method: 'GET', redirect: 'follow', cache: 'no-store' });
-              if (!res.ok) { lastErr = new Error('HTTP ' + res.status); continue; }
-              const text = await res.text();
-              // رفض صفحات HTML (صفحة تسجيل دخول Google)
-              if (!text || text.trim().startsWith('<!') || text.includes('<html')) {
-                lastErr = new Error('الاستجابة ليست JSON — تحقق من نشر السكربت (Anyone)');
-                continue;
-              }
-              let json;
-              try { json = JSON.parse(text); } catch (pe) {
-                lastErr = pe; continue;
-              }
-              let rows = null;
-              if (Array.isArray(json)) rows = json;
-              else if (json && Array.isArray(json.data)) rows = json.data;
-              else if (json && Array.isArray(json.members)) rows = json.members;
-              else if (json && Array.isArray(json.rows)) rows = json.rows;
-              else if (json && Array.isArray(json.result)) rows = json.result;
-              else if (json && typeof json === 'object') {
-                // بعض السكربتات ترجع كائن مفاتيحه أرقام
-                const vals = Object.values(json);
-                if (vals.length && typeof vals[0] === 'object') rows = vals;
-              }
-              if (rows && rows.length >= 0) {
-                allMembers = rows.map(normalizeMember);
-                loaded = true;
-                break;
-              }
-              lastErr = new Error('صيغة استجابة غير معروفة');
-            } catch (e) { lastErr = e; }
-          }
-          if (!loaded) throw lastErr || new Error('تعذر قراءة البيانات');
-        } else {
-          allMembers = getDemoData();
-          loaded = true;
-        }
-      } catch (err) {
-        console.warn('API failed, using demo data:', err);
-        // إظهار تنبيه خفيف في الجدول
-        allMembers = getDemoData();
-        setTimeout(function(){
-          const note = document.createElement('div');
-          note.className = 'fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-[100] bg-amber-50 border border-amber-300 text-amber-900 text-sm font-semibold px-4 py-3 rounded-xl shadow-lg';
-          note.innerHTML = '⚠ تعذر الاتصال بـ Google Sheets. تأكد أن السكربت منشور على <b>Anyone</b> ويعيد JSON. يتم عرض بيانات تجريبية حالياً.';
-          document.body.appendChild(note);
-          setTimeout(function(){ try{ note.remove(); }catch(e){} }, 8000);
-        }, 300);
-      }
-
-      filteredMembers = allMembers.slice();
-      populateWilayaFilter();
-      updateStats();
-      updateCharts();
-      renderTable();
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          rawMembers = data.reverse();
+          populateWilayaFilter(rawMembers);
+          updateAllDashboard(rawMembers);
+        })
+        .catch(err => {
+          console.error("خطأ جلب البيانات:", err);
+          tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-rose-500 font-medium">تعذر الاتصال بـ Google Sheets. تأكد من اتصال الإنترنت.</td></tr>`;
+        });
     }
 
-    function pick(m, keys) {
-      for (let i = 0; i < keys.length; i++) {
-        const k = keys[i];
-        if (m[k] != null && String(m[k]).trim() !== '') return m[k];
-      }
-      // بحث جزئي في المفاتيح (عناوين عربية من Google Forms)
-      const map = {};
-      Object.keys(m || {}).forEach(function(k){ map[String(k).toLowerCase().trim()] = m[k]; });
-      for (let i = 0; i < keys.length; i++) {
-        const k = String(keys[i]).toLowerCase();
-        if (map[k] != null && String(map[k]).trim() !== '') return map[k];
-        // تطابق جزئي
-        const found = Object.keys(map).find(function(mk){ return mk.includes(k) || k.includes(mk); });
-        if (found && map[found] != null && String(map[found]).trim() !== '') return map[found];
-      }
-      return '';
+    function updateAllDashboard(list) {
+      renderCards(list);
+      renderCharts(list);
+      renderTable(list);
     }
 
-    function normalizeMember(m) {
-      if (!m || typeof m !== 'object') m = {};
-      const first = pick(m, ['firstName','first_name','الاسم','الاسم الأول','prénom','prenom']);
-      const last = pick(m, ['lastName','last_name','اللقب','nom']);
-      const fullFromParts = (first + ' ' + last).trim();
-      const fullName = pick(m, ['fullName','full_name','name','الاسم واللقب','الاسم الكامل','Nom complet']) || fullFromParts || '—';
+    function renderCards(list) {
+      document.getElementById('statTotal').innerText = list.length;
 
-      const birth = pick(m, ['birthDate','birth','dateNaissance','تاريخ الميلاد','date of birth','Date de naissance','dob']);
-      let age = pick(m, ['age','العمر','Age']);
-      if (!age && birth) {
-        const y = parseInt(String(birth).replace(/[^\d].*$/,'').slice(0, 4), 10);
-        if (y > 1900 && y < 2100) age = new Date().getFullYear() - y;
-      }
-
-      // حقول API الفعلية: resState=الولاية، resCity=البلدية، birthState=ولاية الميلاد، eduLevel، profession
-      let wilaya = pick(m, [
-        'resState','res_state','wilaya','Wilaya','الولاية','ولاية','ولاية الإقامة','ولاية السكن',
-        'ولاية الإقامة الحالية','ولاية السكن الحالية','state','State'
-      ]);
-      let residence = pick(m, [
-        'resCity','res_city','residence','city','commune','municipality','البلدية','بلدية',
-        'مكان الإقامة','الإقامة','Ville','Commune','البلدية / الدائرة'
-      ]);
-      if (!wilaya || wilaya === '—') {
-        const src = residence || pick(m, ['address','العنوان','Address']) || '';
-        const parts = String(src).split(/\s*[-–—,،\/|]\s*/).map(s => s.trim()).filter(Boolean);
-        if (parts.length >= 2) {
-          wilaya = parts[parts.length - 1];
-          if (!residence) residence = parts[0];
-        }
-      }
-      if (!wilaya) wilaya = '—';
-      if (!residence) residence = wilaya;
-
-      const birthPlace = pick(m, [
-        'birthState','birth_state','birthPlace','lieuNaissance',
-        'مكان الميلاد','مكان الولادة','ولاية الميلاد','Lieu de naissance'
-      ]) || '—';
-
-      return {
-        id: pick(m, ['id','ref','Ref','reference','رقم','رقم التسجيل']) ||
-            (pick(m, ['timestamp','Timestamp']) ? String(pick(m, ['timestamp','Timestamp'])).replace(/\D/g,'').slice(-8) : '') ||
-            ('RW-' + Math.random().toString(36).slice(2, 8).toUpperCase()),
-        fullName: fullName,
-        birthDate: birth || '—',
-        age: age || '—',
-        birthPlace: birthPlace,
-        wilaya: wilaya,
-        residence: residence,
-        phone: pick(m, ['phone','tel','telephone','الهاتف','رقم الهاتف','Téléphone','Phone']) || '—',
-        email: pick(m, ['email','mail','البريد','البريد الإلكتروني','Email','E-mail']) || '—',
-        education: pick(m, ['eduLevel','edu_level','education','niveau','level','المستوى','المستوى الدراسي','المستوى الأكاديمي','Niveau']) || '—',
-        specialty: pick(m, ['specialty','specialite','spec','التخصص','التخصصات','المهارة','Spécialité']) || '—',
-        job: pick(m, ['profession','job','metier','المهنة','المهنة الحالية','الوظيفة','Profession']) || '—',
-        timestamp: pick(m, ['timestamp','date','createdAt','تاريخ التسجيل','توقيت التسجيل','Timestamp','Date']) || ''
-      };
-    }
-
-    /* ========== فلتر الولايات ========== */
-    function populateWilayaFilter() {
-      const sel = document.getElementById('wilayaFilter');
-      const current = sel.value;
-      const set = new Set();
-      allMembers.forEach(m => { if (m.wilaya && m.wilaya !== '—') set.add(m.wilaya); });
-      const list = Array.from(set).sort((a, b) => a.localeCompare(b, 'ar'));
-      sel.innerHTML = '<option value="">جميع الولايات</option>' +
-        list.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join('');
-      if (current) sel.value = current;
-    }
-
-    /* ========== البحث والفلترة ========== */
-    function filterData() {
-      const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-      const w = document.getElementById('wilayaFilter').value;
-      filteredMembers = allMembers.filter(m => {
-        if (w && m.wilaya !== w) return false;
-        if (!q) return true;
-        const hay = [m.fullName, m.phone, m.email, m.wilaya, m.residence, m.specialty, m.job, m.id]
-          .join(' ').toLowerCase();
-        return hay.includes(q);
-      });
-      updateStats();
-      updateCharts();
-      renderTable();
-    }
-
-    /* ========== الإحصائيات ========== */
-    function updateStats() {
-      const list = filteredMembers;
-      document.getElementById('statTotal').textContent = list.length;
-
-      // متوسط العمر
-      const ages = list.map(m => parseInt(m.age, 10)).filter(n => !isNaN(n) && n > 0 && n < 120);
+      const ages = list.map(m => parseInt(m.age)).filter(a => !isNaN(a) && a > 0);
       const avg = ages.length ? Math.round(ages.reduce((a, b) => a + b, 0) / ages.length) : '--';
-      document.getElementById('statAvgAge').textContent = avg;
+      document.getElementById('statAvgAge').innerText = avg !== '--' ? avg + ' سنة' : '--';
 
-      const youth = ages.filter(a => a >= 15 && a <= 35).length;
-      const youthPct = ages.length ? Math.round(youth / ages.length * 100) : 0;
-      document.getElementById('statYouthRatio').textContent =
-        ages.length ? ('نسبة الشباب: ' + youthPct + '%') : 'الفئة الغالبة: —';
-
-      // أكثر ولاية
-      const wCount = countBy(list, m => m.wilaya);
-      const topW = topKey(wCount);
-      document.getElementById('statTopWilaya').textContent = topW || '--';
-      document.getElementById('statTopWilayaCount').textContent = topW ? (wCount[topW] + ' تسجيلات') : '0 تسجيلات';
-
-      // أكثر تخصص
-      const sCount = countBy(list, m => m.specialty);
-      const topS = topKey(sCount);
-      document.getElementById('statTopSpec').textContent = topS || '--';
-      document.getElementById('statWilayasCount').textContent =
-        'من أصل ' + Object.keys(wCount).length + ' ولاية';
-    }
-
-    function countBy(arr, fn) {
-      const o = {};
-      arr.forEach(m => {
-        const k = fn(m);
-        if (!k || k === '—') return;
-        o[k] = (o[k] || 0) + 1;
-      });
-      return o;
-    }
-    function topKey(obj) {
-      let best = null, n = 0;
-      Object.keys(obj).forEach(k => { if (obj[k] > n) { n = obj[k]; best = k; } });
-      return best;
-    }
-
-    /* ========== الرسوم ========== */
-    function updateCharts() {
-      const list = filteredMembers;
-      const colors = ['#05382b','#0c5a45','#a67c2e','#d4ae56','#4fd1a1','#6366f1','#0ea5e9','#f59e0b'];
-
-      // ولايات Top 8 (اسم الولاية وليس البلدية)
-      const wCount = countBy(list, m => m.wilaya);
-      const wSorted = Object.entries(wCount).sort((a, b) => b[1] - a[1]).slice(0, 8);
-      setBarChart('wilaya', 'wilayaChart', wSorted.map(x => x[0]), wSorted.map(x => x[1]), colors);
-
-      // أعمار
-      const buckets = { 'أقل من 18': 0, '18–25': 0, '26–35': 0, '36–45': 0, 'أكبر من 45': 0 };
+      const wilayaCounts = {};
       list.forEach(m => {
-        const a = parseInt(m.age, 10);
-        if (isNaN(a)) return;
-        if (a < 18) buckets['أقل من 18']++;
-        else if (a <= 25) buckets['18–25']++;
-        else if (a <= 35) buckets['26–35']++;
-        else if (a <= 45) buckets['36–45']++;
-        else buckets['أكبر من 45']++;
+        if (m.resState) wilayaCounts[m.resState] = (wilayaCounts[m.resState] || 0) + 1;
       });
-      setDoughnutChart('age', 'ageChart', Object.keys(buckets), Object.values(buckets), colors);
+      const sortedWilayas = Object.entries(wilayaCounts).sort((a, b) => b[1] - a[1]);
+      if (sortedWilayas.length > 0) {
+        document.getElementById('statTopWilaya').innerText = sortedWilayas[0][0];
+        document.getElementById('statTopWilayaCount').innerText = `${sortedWilayas[0][1]} منخرطين`;
+      }
 
-      // مستوى دراسي
-      const eCount = countBy(list, m => m.education);
-      const eEntries = Object.entries(eCount).sort((a, b) => b[1] - a[1]);
-      setDoughnutChart('edu', 'eduChart', eEntries.map(x => x[0]), eEntries.map(x => x[1]), colors);
+      const totalWilayas = Object.keys(wilayaCounts).length;
+      document.getElementById('statWilayasCount').innerText = `تغطية ${totalWilayas} ولاية`;
 
-      // تخصصات Top 8
-      const sCount = countBy(list, m => m.specialty);
-      const sSorted = Object.entries(sCount).sort((a, b) => b[1] - a[1]).slice(0, 8);
-      setBarChart('specialty', 'specialtyChart', sSorted.map(x => x[0]), sSorted.map(x => x[1]), colors);
+      const specCounts = {};
+      list.forEach(m => {
+        if (m.specialty) specCounts[m.specialty] = (specCounts[m.specialty] || 0) + 1;
+      });
+      const sortedSpecs = Object.entries(specCounts).sort((a, b) => b[1] - a[1]);
+      document.getElementById('statTopSpec').innerText = sortedSpecs.length > 0 ? sortedSpecs[0][0] : '--';
     }
 
-    function setBarChart(key, canvasId, labels, data, colors) {
-      const ctx = document.getElementById(canvasId);
-      if (!ctx) return;
-      if (charts[key]) charts[key].destroy();
-      charts[key] = new Chart(ctx, {
+    function renderCharts(list) {
+      Object.values(charts).forEach(c => c && c.destroy());
+
+      // الولايات
+      const wilayaCounts = {};
+      list.forEach(m => { if (m.resState) wilayaCounts[m.resState] = (wilayaCounts[m.resState] || 0) + 1; });
+      const topWilayas = Object.entries(wilayaCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+      charts.wilaya = new Chart(document.getElementById('wilayaChart'), {
         type: 'bar',
         data: {
-          labels,
+          labels: topWilayas.map(w => w[0]),
           datasets: [{
-            data,
-            backgroundColor: labels.map((_, i) => colors[i % colors.length]),
-            borderRadius: 8,
-            maxBarThickness: 36
+            label: 'عدد المنخرطين',
+            data: topWilayas.map(w => w[1]),
+            backgroundColor: '#0c5a45',
+            borderRadius: 6,
+            barThickness: 18
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { family: 'IBM Plex Sans Arabic' } } },
+            y: { grid: { display: false }, ticks: { font: { family: 'IBM Plex Sans Arabic', size: 11 } } }
+          }
+        }
+      });
+
+      // الأعمار
+      let ageGroups = { 'أقل من 20': 0, '20 إلى 30 سنة': 0, '31 إلى 40 سنة': 0, 'أكبر من 40': 0 };
+      list.forEach(m => {
+        const a = parseInt(m.age);
+        if (!isNaN(a)) {
+          if (a < 20) ageGroups['أقل من 20']++;
+          else if (a <= 30) ageGroups['20 إلى 30 سنة']++;
+          else if (a <= 40) ageGroups['31 إلى 40 سنة']++;
+          else ageGroups['أكبر من 40']++;
+        }
+      });
+
+      charts.age = new Chart(document.getElementById('ageChart'), {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(ageGroups),
+          datasets: [{
+            data: Object.values(ageGroups),
+            backgroundColor: ['#4fd1a1', '#05382b', '#d4ae56', '#a67c2e'],
+            borderWidth: 0,
+            hoverOffset: 8
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { font: { family: 'IBM Plex Sans Arabic', size: 11 } }, grid: { display: false } },
-            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f1f5f9' } }
+          cutout: '62%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { family: 'IBM Plex Sans Arabic', size: 11 }, padding: 16, usePointStyle: true }
+            }
           }
         }
       });
-    }
 
-    function setDoughnutChart(key, canvasId, labels, data, colors) {
-      const ctx = document.getElementById(canvasId);
-      if (!ctx) return;
-      if (charts[key]) charts[key].destroy();
-      charts[key] = new Chart(ctx, {
-        type: 'doughnut',
+      // المستوى الدراسي
+      const eduCounts = {};
+      list.forEach(m => { if (m.eduLevel) eduCounts[m.eduLevel] = (eduCounts[m.eduLevel] || 0) + 1; });
+
+      charts.edu = new Chart(document.getElementById('eduChart'), {
+        type: 'polarArea',
         data: {
-          labels,
+          labels: Object.keys(eduCounts),
           datasets: [{
-            data,
-            backgroundColor: labels.map((_, i) => colors[i % colors.length]),
-            borderWidth: 2,
-            borderColor: '#fff'
+            data: Object.values(eduCounts),
+            backgroundColor: ['#05382b99', '#0c5a4599', '#a67c2e99', '#3b82f699', '#8b5cf699']
           }]
         },
         options: {
@@ -661,85 +555,108 @@
           plugins: {
             legend: {
               position: 'bottom',
-              labels: { font: { family: 'IBM Plex Sans Arabic', size: 11 }, padding: 12, boxWidth: 12 }
+              labels: { font: { family: 'IBM Plex Sans Arabic', size: 11 }, padding: 14, usePointStyle: true }
             }
+          }
+        }
+      });
+
+      // التخصصات
+      const specCounts = {};
+      list.forEach(m => { if (m.specialty) specCounts[m.specialty] = (specCounts[m.specialty] || 0) + 1; });
+      const topSpecs = Object.entries(specCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
+      charts.specialty = new Chart(document.getElementById('specialtyChart'), {
+        type: 'bar',
+        data: {
+          labels: topSpecs.map(s => s[0]),
+          datasets: [{
+            label: 'عدد المنخرطين',
+            data: topSpecs.map(s => s[1]),
+            backgroundColor: '#a67c2e',
+            borderRadius: 6,
+            barThickness: 22
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { family: 'IBM Plex Sans Arabic', size: 10 } } },
+            y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { family: 'IBM Plex Sans Arabic' } } }
           }
         }
       });
     }
 
-    /* ========== الجدول ========== */
-    function renderTable() {
+    function renderTable(list) {
       const tbody = document.getElementById('tableBody');
-      if (!filteredMembers.length) {
-        tbody.innerHTML = `<tr><td colspan="10" class="p-12 text-center text-slate-400">لا توجد نتائج مطابقة</td></tr>`;
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="p-10 text-center text-slate-400">لا توجد سجلات مطابقة للبحث</td></tr>`;
         return;
       }
-      tbody.innerHTML = filteredMembers.map((m, i) => {
-        const ts = formatDate(m.timestamp);
-        return `<tr class="member-row" onclick="openMemberModal(${i})">
-          <td class="p-4 text-slate-400 font-medium">${i + 1}</td>
-          <td class="p-4 font-bold text-[#05382b]">${escapeHtml(m.fullName)}</td>
-          <td class="p-4">${escapeHtml(String(m.age))} <span class="text-slate-400 text-xs">/ ${escapeHtml(m.birthDate || '—')}</span></td>
-          <td class="p-4">${escapeHtml(m.wilaya)}${m.residence && m.residence !== m.wilaya && m.residence !== '—' ? '<br><span class="text-[11px] text-slate-400">'+escapeHtml(m.residence)+'</span>' : ''}</td>
-          <td class="p-4 font-mono text-xs" dir="ltr">${escapeHtml(m.phone)}</td>
-          <td class="p-4 font-mono text-xs text-slate-500" dir="ltr">${escapeHtml(m.email)}</td>
-          <td class="p-4"><span class="text-xs font-semibold">${escapeHtml(m.education)}</span><br><span class="text-[11px] text-slate-400">${escapeHtml(m.specialty)}</span></td>
-          <td class="p-4 text-sm">${escapeHtml(m.job)}</td>
-          <td class="p-4 text-xs text-slate-400">${escapeHtml(ts)}</td>
-          <td class="p-4 text-center"><span class="inline-block px-2.5 py-1 rounded-lg bg-[#05382b]/8 text-[#05382b] text-[11px] font-bold">عرض</span></td>
-        </tr>`;
-      }).join('');
+
+      tbody.innerHTML = list.map((m, idx) => `
+        <tr class="member-row cursor-pointer" onclick='openMemberModal(${JSON.stringify(m).replace(/'/g, "&apos;")})'>
+          <td class="p-4 font-bold text-slate-400 text-xs">${idx + 1}</td>
+          <td class="p-4 font-bold text-[#05382b]">${m.firstName || ''} ${m.lastName || ''}</td>
+          <td class="p-4">
+            <div class="font-medium">${m.age ? m.age + ' سنة' : ''}</div>
+            <div class="text-[11px] text-slate-400">${m.birthDate || ''}</div>
+          </td>
+          <td class="p-4">
+            <div>${m.resCity || ''}</div>
+            <div class="text-xs text-slate-400">${m.resState || ''}</div>
+          </td>
+          <td class="p-4 font-mono font-medium text-xs" dir="ltr">${m.phone || ''}</td>
+          <td class="p-4 font-mono text-xs text-slate-500" dir="ltr">${m.email || ''}</td>
+          <td class="p-4">
+            <div class="font-medium">${m.eduLevel || ''}</div>
+            <div class="text-[11px] text-slate-400">${m.specialty || ''}</div>
+          </td>
+          <td class="p-4 text-xs font-semibold text-slate-600">${m.profession || ''}</td>
+          <td class="p-4 text-[11px] text-slate-400">${m.timestamp || ''}</td>
+          <td class="p-4 text-center">
+            <button class="bg-[#05382b]/5 text-[#05382b] border border-[#05382b]/15 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#05382b] hover:text-white transition-all">
+              🪪 عرض
+            </button>
+          </td>
+        </tr>
+      `).join('');
     }
 
-    /* ========== نافذة العضو ========== */
-    function openMemberModal(index) {
-      const m = filteredMembers[index];
-      if (!m) return;
-      document.getElementById('dFullName').textContent = m.fullName;
-      document.getElementById('dBirth').textContent = (m.age !== '—' ? m.age + ' سنة' : '—') + '  •  ' + (m.birthDate || '—');
-      document.getElementById('dBirthPlace').textContent = m.birthPlace;
-      document.getElementById('dResidence').textContent =
-        (m.wilaya && m.wilaya !== '—' ? m.wilaya : '') +
-        (m.residence && m.residence !== m.wilaya && m.residence !== '—' ? ' — ' + m.residence : '') || '—';
-      document.getElementById('dPhone').textContent = m.phone;
-      document.getElementById('dEmail').textContent = m.email;
-      document.getElementById('dEdu').textContent = m.education + ' — ' + m.specialty;
-      document.getElementById('dJob').textContent = m.job;
-      document.getElementById('dTimestamp').textContent = formatDate(m.timestamp);
-      document.getElementById('modalRefId').textContent = m.id;
+    function openMemberModal(m) {
+      // الاسم واللقب معاً
+      const fullName = `${m.firstName || ''} ${m.lastName || ''}`.trim() || '--';
 
+      document.getElementById('dFullName').innerText = fullName;
+      document.getElementById('dBirth').innerText = `\( {m.age ? m.age + ' سنة' : ''} ( \){m.birthDate || ''})`;
+      document.getElementById('dBirthPlace').innerText = m.birthState || '--';
+      document.getElementById('dResidence').innerText = `${m.resCity || ''} - ولاية ${m.resState || ''}`;
+      document.getElementById('dPhone').innerText = m.phone || '--';
+      document.getElementById('dEmail').innerText = m.email || '--';
+      document.getElementById('dEdu').innerText = `${m.eduLevel || ''} | ${m.specialty || ''}`;
+      document.getElementById('dJob').innerText = m.profession || '--';
+      document.getElementById('dTimestamp').innerText = m.timestamp || '--';
+
+      const hashId = Math.abs((m.phone || m.firstName || '').split('').reduce((a, b) => {
+        a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a;
+      }, 0));
+      const refCode = 'ARH-' + (10000 + (hashId % 90000));
+      document.getElementById('modalRefId').innerText = 'رقم الملف: ' + refCode;
+
+      // QR يحتوي على الاسم واللقب معاً
       const qrBox = document.getElementById('memberQrCode');
       qrBox.innerHTML = '';
-      const payload = [
-        'الجمعية الوطنية لرواد بيوت الشباب',
-        'Ref: ' + m.id,
-        'الاسم: ' + m.fullName,
-        'الولاية: ' + (m.wilaya || m.residence),
-        'الهاتف: ' + m.phone
-      ].join('\n');
-
-      // توليد QR بشكل موثوق: مكتبة qrcodejs أولاً، ثم صورة من خدمة خارجية كاحتياط
-      let qrDone = false;
-      try {
-        if (typeof QRCode !== 'undefined') {
-          new QRCode(qrBox, {
-            text: payload,
-            width: 140,
-            height: 140,
-            colorDark: '#05382b',
-            colorLight: '#ffffff',
-            correctLevel: (QRCode.CorrectLevel && QRCode.CorrectLevel.M) ? QRCode.CorrectLevel.M : 0
-          });
-          qrDone = qrBox.querySelector('canvas, img') != null;
-        }
-      } catch (e) {
-        qrDone = false;
-      }
-      if (!qrDone) {
-        const url = 'https://api.qrserver.com/v1/create-qr-code/?size=140x140&margin=8&data=' + encodeURIComponent(payload);
-        qrBox.innerHTML = '<img src="' + url + '" width="140" height="140" alt="QR" style="display:block;margin:0 auto;border-radius:8px" onerror="this.parentNode.innerHTML=\'<span class=\\\'text-xs text-slate-400\\\'>تعذر إنشاء QR</span>\'">';
-      }
+      new QRCode(qrBox, {
+        text: `الجمعية الوطنية لرواد بيوت الشباب\nالاسم واللقب: ${fullName}\nرقم الملف: ${refCode}\nالهاتف: ${m.phone || ''}\nالولاية: ${m.resState || ''}`,
+        width: 125,
+        height: 125,
+        colorDark: "#05382b",
+        colorLight: "#ffffff"
+      });
 
       document.getElementById('memberDetailsModal').classList.remove('hide');
     }
@@ -748,60 +665,38 @@
       document.getElementById('memberDetailsModal').classList.add('hide');
     }
 
-    /* ========== تصدير CSV ========== */
+    function populateWilayaFilter(list) {
+      const select = document.getElementById('wilayaFilter');
+      const unique = [...new Set(list.map(m => m.resState).filter(Boolean))].sort();
+      select.innerHTML = '<option value="">جميع الولايات</option>' + 
+        unique.map(w => `<option value="\( {w}"> \){w}</option>`).join('');
+    }
+
+    function filterData() {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      const selW = document.getElementById('wilayaFilter').value;
+
+      const filtered = rawMembers.filter(m => {
+        const text = `${m.firstName || ''} ${m.lastName || ''} ${m.phone || ''} ${m.resCity || ''} ${m.resState || ''} ${m.specialty || ''} ${m.email || ''}`.toLowerCase();
+        const matchQ = text.includes(q);
+        const matchW = !selW || m.resState === selW;
+        return matchQ && matchW;
+      });
+
+      renderTable(filtered);
+    }
+
     function exportCSV() {
-      const rows = filteredMembers;
-      if (!rows.length) { alert('لا توجد بيانات للتصدير'); return; }
-      const headers = ['الرقم','الاسم واللقب','العمر','تاريخ الميلاد','مكان الميلاد','الإقامة','الهاتف','البريد','المستوى','التخصص','المهنة','تاريخ التسجيل'];
-      const lines = [headers.join(',')];
-      rows.forEach(m => {
-        const cols = [m.id, m.fullName, m.age, m.birthDate, m.birthPlace, m.wilaya, m.phone, m.email, m.education, m.specialty, m.job, formatDate(m.timestamp)];
-        lines.push(cols.map(csvEscape).join(','));
+      let csv = "\uFEFFالاسم,اللقب,تاريخ الميلاد,العمر,مكان الميلاد,ولاية الإقامة,بلدية الإقامة,الهاتف,البريد,المستوى الدراسي,التخصص,المهنة,توقيت التسجيل\n";
+      rawMembers.forEach(m => {
+        csv += `"\( {m.firstName || ''}"," \){m.lastName || ''}","\( {m.birthDate || ''}"," \){m.age || ''}","\( {m.birthState || ''}"," \){m.resState || ''}","\( {m.resCity || ''}"," \){m.phone || ''}","\( {m.email || ''}"," \){m.eduLevel || ''}","\( {m.specialty || ''}"," \){m.profession || ''}","${m.timestamp || ''}"\n`;
       });
-      const bom = '\uFEFF';
-      const blob = new Blob([bom + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'ruwad_members_' + new Date().toISOString().slice(0, 10) + '.csv';
-      a.click();
-      URL.revokeObjectURL(url);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `سجل_المنخرطين_${new Date().toLocaleDateString('fr-FR')}.csv`;
+      link.click();
     }
-
-    function csvEscape(v) {
-      const s = String(v == null ? '' : v);
-      if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
-      return s;
-    }
-
-    /* ========== مساعدات ========== */
-    function escapeHtml(s) {
-      return String(s == null ? '' : s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-    function formatDate(v) {
-      if (!v) return '—';
-      try {
-        const d = new Date(v);
-        if (isNaN(d.getTime())) return String(v);
-        return d.toLocaleString('ar-DZ', { dateStyle: 'medium', timeStyle: 'short' });
-      } catch (e) { return String(v); }
-    }
-
-    /* ========== بدء ========== */
-    (function init() {
-      try {
-        if (sessionStorage.getItem('ruwad_auth') === '1') {
-          document.getElementById('loginGate').classList.add('hide');
-          document.getElementById('dashboardApp').classList.remove('hide');
-          fetchMembers();
-        }
-      } catch (e) {}
-      document.getElementById('memberDetailsModal').addEventListener('click', function(e) {
-        if (e.target === this) closeMemberModal();
-      });
-    })();
   </script>
 </body>
 </html>
