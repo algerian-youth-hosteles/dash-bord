@@ -77,7 +77,6 @@
   </style>
 </head>
 <body class="antialiased">
-
   <!-- ==================== بوابة الدخول ==================== -->
   <div id="loginGate" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
        style="background: linear-gradient(145deg, rgba(3, 28, 21, 0.97), rgba(5, 56, 43, 0.93)), url('https://lh3.googleusercontent.com/d/1NwCLWEE5RSeBavtK0b_7-mvmlt14xTnu') center/cover no-repeat fixed;">
@@ -168,7 +167,6 @@
         <span class="text-[11px] text-slate-400 font-medium bg-slate-50 px-2.5 py-1 rounded-lg">58 ولاية • من الأعلى إلى الأقل</span>
       </div>
       <div id="wilayaRanking" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 max-h-[420px] overflow-y-auto pr-1">
-        <!-- يُملأ ديناميكياً -->
       </div>
     </div>
 
@@ -213,7 +211,7 @@
         </div>
         <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           <div class="relative flex-1 sm:flex-none">
-            <input type="text" id="searchInput" oninput="filterData()" placeholder="بحث سريع (الاسم، الهاتف، الولاية...)"
+            <input type="text" id="searchInput" oninput="filterData()" placeholder="بحث سريع (الاسم، الهاتف، الولاية، القطاع...)"
                    class="w-full sm:w-72 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#05382b] focus:ring-2 focus:ring-[#05382b]/10 transition bg-slate-50/50">
           </div>
           <select id="wilayaFilter" onchange="filterData()"
@@ -234,13 +232,14 @@
               <th class="p-4 font-semibold">البريد</th>
               <th class="p-4 font-semibold">المستوى والتخصص</th>
               <th class="p-4 font-semibold">المهنة</th>
+              <th class="p-4 font-semibold">القطاع</th>
               <th class="p-4 font-semibold">توقيت التسجيل</th>
               <th class="p-4 font-semibold text-center">الملف</th>
             </tr>
           </thead>
           <tbody id="tableBody" class="divide-y divide-slate-50">
             <tr>
-              <td colspan="10" class="p-12 text-center text-slate-400">
+              <td colspan="11" class="p-12 text-center text-slate-400">
                 <div class="flex flex-col items-center gap-3">
                   <div class="w-10 h-10 border-2 border-[#05382b]/20 border-t-[#05382b] rounded-full animate-spin"></div>
                   <span>جاري الاتصال بالسجلات...</span>
@@ -287,7 +286,8 @@
               <tr><td class="p-3 font-bold text-slate-500">البريد الإلكتروني</td><td id="dEmail" class="p-3 font-mono text-slate-700 text-xs" dir="ltr">--</td></tr>
               <tr class="bg-slate-50/60"><td class="p-3 font-bold text-slate-500">المستوى والتخصص</td><td id="dEdu" class="p-3 font-semibold text-slate-800">--</td></tr>
               <tr><td class="p-3 font-bold text-slate-500">المهنة الحالية</td><td id="dJob" class="p-3 font-semibold text-slate-800">--</td></tr>
-              <tr class="bg-slate-50/60"><td class="p-3 font-bold text-slate-500">توقيت التسجيل</td><td id="dTimestamp" class="p-3 text-slate-500 text-xs">--</td></tr>
+              <tr class="bg-slate-50/60"><td class="p-3 font-bold text-slate-500">القطاع</td><td id="dSector" class="p-3 font-semibold text-slate-800">--</td></tr>
+              <tr><td class="p-3 font-bold text-slate-500">توقيت التسجيل</td><td id="dTimestamp" class="p-3 text-slate-500 text-xs">--</td></tr>
             </tbody>
           </table>
         </div>
@@ -306,14 +306,11 @@
   <script>
     /* ========== الإعدادات ========== */
     const ADMIN_PASSWORD = "0000";
-    // رابط Google Apps Script المتصل بجدول الأعضاء
     const API_URL = "https://script.google.com/macros/s/AKfycbzLAJYwuSNeC8vasqjqPCUvljQmJsgGNsfTTSrKQsyVcPIleppVdDA0LbhXaeB_EU7X/exec";
-
     let allMembers = [];
     let filteredMembers = [];
     let charts = { wilaya: null, age: null, edu: null, specialty: null };
 
-    // الولايات الـ 58 (الترتيب الرسمي)
     const ALL_WILAYAS = [
       'أدرار','الشلف','الأغواط','أم البواقي','باتنة','بجاية','بسكرة','بشار','البليدة','البويرة',
       'تمنراست','تبسة','تلمسان','تيارت','تيزي وزو','الجزائر','الجلفة','جيجل','سطيف','سعيدة',
@@ -325,9 +322,16 @@
 
     /* ========== المصادقة ========== */
     function checkAuth() {
-      const pass = (document.getElementById('adminPass').value || '').trim();
+      const input = document.getElementById('adminPass');
       const err = document.getElementById('authErr');
-      if (pass === ADMIN_PASSWORD) {
+      const pass = (input.value || '').toString().trim();
+
+      // تحويل الأرقام العربية إلى إنجليزية إن وُجدت
+      const normalized = pass.replace(/[٠-٩]/g, function(d) {
+        return '٠١٢٣٤٥٦٧٨٩'.indexOf(d);
+      });
+
+      if (normalized === ADMIN_PASSWORD || pass === ADMIN_PASSWORD) {
         err.classList.add('hide');
         document.getElementById('loginGate').classList.add('hide');
         document.getElementById('dashboardApp').classList.remove('hide');
@@ -335,17 +339,18 @@
         fetchMembers();
       } else {
         err.classList.remove('hide');
-        document.getElementById('adminPass').value = '';
-        document.getElementById('adminPass').focus();
+        input.value = '';
+        input.focus();
       }
     }
 
-    /* ========== بيانات تجريبية (تُستخدم إذا لم يوجد API) ========== */
+    /* ========== بيانات تجريبية ========== */
     function getDemoData() {
       const wilayas = ['الجزائر','وهران','قسنطينة','عنابة','سطيف','باتنة','تيزي وزو','بجاية','البليدة','تلمسان'];
       const specs = ['إعلام آلي','طب','هندسة مدنية','قانون','اقتصاد','لغة إنجليزية','تربية بدنية','صيدلة','عمارة','إدارة أعمال'];
       const levels = ['ثانوي','ليسانس','ماستر','دكتوراه','تكوين مهني'];
       const jobs = ['طالب','موظف','عاطل','تاجر','مهندس','أستاذ','طبيب','حرفي'];
+      const sectors = ['قطاع الشباب','القطاع الخاص','القطاع العام','التعليم','الصحة'];
       const firsts = ['أحمد','محمد','يوسف','أمين','خالد','سارة','مريم','فاطمة','نادية','ياسين','إلياس','سمية'];
       const lasts = ['بن علي','بوزيد','حسين','عمار','بوخاري','زروقي','بلقاسم','خليفي','منصوري','براهمي'];
       const data = [];
@@ -368,6 +373,7 @@
           education: levels[Math.floor(Math.random() * levels.length)],
           specialty: specs[Math.floor(Math.random() * specs.length)],
           job: jobs[Math.floor(Math.random() * jobs.length)],
+          sector: sectors[Math.floor(Math.random() * sectors.length)],
           timestamp: new Date(Date.now() - Math.random() * 90 * 86400000).toISOString()
         });
       }
@@ -377,16 +383,14 @@
     /* ========== جلب البيانات ========== */
     async function fetchMembers() {
       const tbody = document.getElementById('tableBody');
-      tbody.innerHTML = `<tr><td colspan="10" class="p-12 text-center text-slate-400">
+      tbody.innerHTML = `<tr><td colspan="11" class="p-12 text-center text-slate-400">
         <div class="flex flex-col items-center gap-3">
           <div class="w-10 h-10 border-2 border-[#05382b]/20 border-t-[#05382b] rounded-full animate-spin"></div>
           <span>جاري الاتصال بالسجلات الحقيقية...</span>
         </div></td></tr>`;
-
       let loaded = false;
       try {
         if (API_URL && API_URL.length > 20) {
-          // محاولات متعددة لصيغة الـ API الشائعة
           const urls = [
             API_URL,
             API_URL + (API_URL.includes('?') ? '&' : '?') + 'action=list',
@@ -399,7 +403,6 @@
               const res = await fetch(url, { method: 'GET', redirect: 'follow', cache: 'no-store' });
               if (!res.ok) { lastErr = new Error('HTTP ' + res.status); continue; }
               const text = await res.text();
-              // رفض صفحات HTML (صفحة تسجيل دخول Google)
               if (!text || text.trim().startsWith('<!') || text.includes('<html')) {
                 lastErr = new Error('الاستجابة ليست JSON — تحقق من نشر السكربت (Anyone)');
                 continue;
@@ -415,7 +418,6 @@
               else if (json && Array.isArray(json.rows)) rows = json.rows;
               else if (json && Array.isArray(json.result)) rows = json.result;
               else if (json && typeof json === 'object') {
-                // بعض السكربتات ترجع كائن مفاتيحه أرقام
                 const vals = Object.values(json);
                 if (vals.length && typeof vals[0] === 'object') rows = vals;
               }
@@ -434,7 +436,6 @@
         }
       } catch (err) {
         console.warn('API failed, using demo data:', err);
-        // إظهار تنبيه خفيف في الجدول
         allMembers = getDemoData();
         setTimeout(function(){
           const note = document.createElement('div');
@@ -444,7 +445,6 @@
           setTimeout(function(){ try{ note.remove(); }catch(e){} }, 8000);
         }, 300);
       }
-
       filteredMembers = allMembers.slice();
       populateWilayaFilter();
       updateStats();
@@ -457,24 +457,32 @@
         const k = keys[i];
         if (m[k] != null && String(m[k]).trim() !== '') return m[k];
       }
-      // بحث جزئي في المفاتيح (عناوين عربية من Google Forms)
       const map = {};
       Object.keys(m || {}).forEach(function(k){ map[String(k).toLowerCase().trim()] = m[k]; });
       for (let i = 0; i < keys.length; i++) {
         const k = String(keys[i]).toLowerCase();
         if (map[k] != null && String(map[k]).trim() !== '') return map[k];
-        // تطابق جزئي
         const found = Object.keys(map).find(function(mk){ return mk.includes(k) || k.includes(mk); });
         if (found && map[found] != null && String(map[found]).trim() !== '') return map[found];
       }
       return '';
     }
 
+    function isLikelyDate(val) {
+      if (!val) return false;
+      const s = String(val).trim();
+      if (/قطاع|خاص|عام|شباب|تعليم|صحة|وظيفة|مهنة/i.test(s)) return false;
+      if (/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}/.test(s)) return true;
+      if (/^\d{1,2}[-\/]\d{1,2}[-\/]\d{4}/.test(s)) return true;
+      if (/^\d{4}-\d{2}-\d{2}T/.test(s)) return true;
+      const d = new Date(s);
+      return !isNaN(d.getTime()) && d.getFullYear() > 1990 && d.getFullYear() < 2100;
+    }
+
     function normalizeMember(m) {
       if (!m || typeof m !== 'object') m = {};
       const first = pick(m, ['firstName','first_name','الاسم','الاسم الأول','prénom','prenom']);
       const last = pick(m, ['lastName','last_name','اللقب','nom','familyName','family_name']);
-      // الاسم الكامل = الاسم + اللقب دائماً عند توفرهما
       let fullName = '';
       if (first && last) fullName = (first + ' ' + last).trim();
       else if (first || last) fullName = (first || last).trim();
@@ -487,7 +495,6 @@
         if (y > 1900 && y < 2100) age = new Date().getFullYear() - y;
       }
 
-      // حقول API الفعلية: resState=الولاية، resCity=البلدية، birthState=ولاية الميلاد، eduLevel، profession
       let wilaya = pick(m, [
         'resState','res_state','wilaya','Wilaya','الولاية','ولاية','ولاية الإقامة','ولاية السكن',
         'ولاية الإقامة الحالية','ولاية السكن الحالية','state','State'
@@ -513,9 +520,22 @@
         'مكان الميلاد','مكان الولادة','ولاية الميلاد','Lieu de naissance'
       ]) || '—';
 
+      // ---- إصلاح خلط timestamp / القطاع ----
+      let rawTimestamp = pick(m, ['timestamp','date','createdAt','تاريخ التسجيل','توقيت التسجيل','Timestamp','Date']) || '';
+      let sector = pick(m, ['sector','القطاع','قطاع','قطاع التسجيل','مكان التسجيل','Sector','القطاع المهني']) || '';
+
+      if (rawTimestamp && !isLikelyDate(rawTimestamp)) {
+        if (!sector || sector === '—') {
+          sector = rawTimestamp;
+        }
+        rawTimestamp = '';
+      }
+
       return {
         id: pick(m, ['id','ref','Ref','reference','رقم','رقم التسجيل']) ||
-            (pick(m, ['timestamp','Timestamp']) ? String(pick(m, ['timestamp','Timestamp'])).replace(/\D/g,'').slice(-8) : '') ||
+            (pick(m, ['timestamp','Timestamp']) && isLikelyDate(pick(m, ['timestamp','Timestamp']))
+              ? String(pick(m, ['timestamp','Timestamp'])).replace(/\D/g,'').slice(-8)
+              : '') ||
             ('RW-' + Math.random().toString(36).slice(2, 8).toUpperCase()),
         fullName: fullName,
         birthDate: birth || '—',
@@ -528,7 +548,8 @@
         education: pick(m, ['eduLevel','edu_level','education','niveau','level','المستوى','المستوى الدراسي','المستوى الأكاديمي','Niveau']) || '—',
         specialty: pick(m, ['specialty','specialite','spec','التخصص','التخصصات','المهارة','Spécialité']) || '—',
         job: pick(m, ['profession','job','metier','المهنة','المهنة الحالية','الوظيفة','Profession']) || '—',
-        timestamp: pick(m, ['timestamp','date','createdAt','تاريخ التسجيل','توقيت التسجيل','Timestamp','Date']) || ''
+        sector: sector || '—',
+        timestamp: rawTimestamp || ''
       };
     }
 
@@ -551,7 +572,7 @@
       filteredMembers = allMembers.filter(m => {
         if (w && m.wilaya !== w) return false;
         if (!q) return true;
-        const hay = [m.fullName, m.phone, m.email, m.wilaya, m.residence, m.specialty, m.job, m.id]
+        const hay = [m.fullName, m.phone, m.email, m.wilaya, m.residence, m.specialty, m.job, m.sector, m.id]
           .join(' ').toLowerCase();
         return hay.includes(q);
       });
@@ -564,24 +585,17 @@
     function updateStats() {
       const list = filteredMembers;
       document.getElementById('statTotal').textContent = list.length;
-
-      // متوسط العمر
       const ages = list.map(m => parseInt(m.age, 10)).filter(n => !isNaN(n) && n > 0 && n < 120);
       const avg = ages.length ? Math.round(ages.reduce((a, b) => a + b, 0) / ages.length) : '--';
       document.getElementById('statAvgAge').textContent = avg;
-
       const youth = ages.filter(a => a >= 15 && a <= 35).length;
       const youthPct = ages.length ? Math.round(youth / ages.length * 100) : 0;
       document.getElementById('statYouthRatio').textContent =
         ages.length ? ('نسبة الشباب: ' + youthPct + '%') : 'الفئة الغالبة: —';
-
-      // أكثر ولاية
       const wCount = countBy(list, m => m.wilaya);
       const topW = topKey(wCount);
       document.getElementById('statTopWilaya').textContent = topW || '--';
       document.getElementById('statTopWilayaCount').textContent = topW ? (wCount[topW] + ' تسجيلات') : '0 تسجيلات';
-
-      // أكثر تخصص
       const sCount = countBy(list, m => m.specialty);
       const topS = topKey(sCount);
       document.getElementById('statTopSpec').textContent = topS || '--';
@@ -608,9 +622,7 @@
     function normalizeWilayaName(name) {
       if (!name) return '';
       let s = String(name).trim();
-      // توحيد بعض الصيغ الشائعة
       s = s.replace(/^ولاية\s+/i, '').replace(/^Wilaya\s+/i, '').trim();
-      // مطابقة مع قائمة الـ 58
       const found = ALL_WILAYAS.find(w => w === s || s.includes(w) || w.includes(s));
       return found || s;
     }
@@ -618,8 +630,6 @@
     function renderWilayaRanking(wCount) {
       const box = document.getElementById('wilayaRanking');
       if (!box) return;
-
-      // دمج العدّ مع توحيد الأسماء
       const counts = {};
       ALL_WILAYAS.forEach(w => { counts[w] = 0; });
       Object.keys(wCount || {}).forEach(k => {
@@ -628,13 +638,10 @@
         if (counts[norm] != null) counts[norm] += wCount[k];
         else counts[norm] = (counts[norm] || 0) + wCount[k];
       });
-
-      // ترتيب من الأعلى إلى الأقل، ثم أبجدياً عند التعادل
       const ranked = Object.keys(counts).sort((a, b) => {
         if (counts[b] !== counts[a]) return counts[b] - counts[a];
         return a.localeCompare(b, 'ar');
       });
-
       const max = ranked.length ? counts[ranked[0]] : 0;
       box.innerHTML = ranked.map((w, i) => {
         const n = counts[w];
@@ -660,14 +667,10 @@
     function updateCharts() {
       const list = filteredMembers;
       const colors = ['#05382b','#0c5a45','#a67c2e','#d4ae56','#4fd1a1','#6366f1','#0ea5e9','#f59e0b'];
-
-      // ولايات: ترتيب كامل 58 + مخطط Top 10
       const wCount = countBy(list, m => m.wilaya);
       renderWilayaRanking(wCount);
       const wSorted = Object.entries(wCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
       setBarChart('wilaya', 'wilayaChart', wSorted.map(x => x[0]), wSorted.map(x => x[1]), colors);
-
-      // أعمار
       const buckets = { 'أقل من 18': 0, '18–25': 0, '26–35': 0, '36–45': 0, 'أكبر من 45': 0 };
       list.forEach(m => {
         const a = parseInt(m.age, 10);
@@ -679,13 +682,9 @@
         else buckets['أكبر من 45']++;
       });
       setDoughnutChart('age', 'ageChart', Object.keys(buckets), Object.values(buckets), colors);
-
-      // مستوى دراسي
       const eCount = countBy(list, m => m.education);
       const eEntries = Object.entries(eCount).sort((a, b) => b[1] - a[1]);
       setDoughnutChart('edu', 'eduChart', eEntries.map(x => x[0]), eEntries.map(x => x[1]), colors);
-
-      // تخصصات Top 8
       const sCount = countBy(list, m => m.specialty);
       const sSorted = Object.entries(sCount).sort((a, b) => b[1] - a[1]).slice(0, 8);
       setBarChart('specialty', 'specialtyChart', sSorted.map(x => x[0]), sSorted.map(x => x[1]), colors);
@@ -750,7 +749,7 @@
     function renderTable() {
       const tbody = document.getElementById('tableBody');
       if (!filteredMembers.length) {
-        tbody.innerHTML = `<tr><td colspan="10" class="p-12 text-center text-slate-400">لا توجد نتائج مطابقة</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" class="p-12 text-center text-slate-400">لا توجد نتائج مطابقة</td></tr>`;
         return;
       }
       tbody.innerHTML = filteredMembers.map((m, i) => {
@@ -764,6 +763,7 @@
           <td class="p-4 font-mono text-xs text-slate-500" dir="ltr">${escapeHtml(m.email)}</td>
           <td class="p-4"><span class="text-xs font-semibold">${escapeHtml(m.education)}</span><br><span class="text-[11px] text-slate-400">${escapeHtml(m.specialty)}</span></td>
           <td class="p-4 text-sm">${escapeHtml(m.job)}</td>
+          <td class="p-4 text-sm font-medium text-[#0c5a45]">${escapeHtml(m.sector || '—')}</td>
           <td class="p-4 text-xs text-slate-400">${escapeHtml(ts)}</td>
           <td class="p-4 text-center"><span class="inline-block px-2.5 py-1 rounded-lg bg-[#05382b]/8 text-[#05382b] text-[11px] font-bold">عرض</span></td>
         </tr>`;
@@ -784,6 +784,7 @@
       document.getElementById('dEmail').textContent = m.email;
       document.getElementById('dEdu').textContent = m.education + ' — ' + m.specialty;
       document.getElementById('dJob').textContent = m.job;
+      document.getElementById('dSector').textContent = m.sector || '—';
       document.getElementById('dTimestamp').textContent = formatDate(m.timestamp);
       document.getElementById('modalRefId').textContent = m.id;
 
@@ -794,10 +795,9 @@
         'Ref: ' + m.id,
         'الاسم واللقب: ' + m.fullName,
         'الولاية: ' + (m.wilaya || m.residence),
+        'القطاع: ' + (m.sector || '—'),
         'الهاتف: ' + m.phone
       ].join('\n');
-
-      // توليد QR بشكل موثوق: مكتبة qrcodejs أولاً، ثم صورة من خدمة خارجية كاحتياط
       let qrDone = false;
       try {
         if (typeof QRCode !== 'undefined') {
@@ -818,7 +818,6 @@
         const url = 'https://api.qrserver.com/v1/create-qr-code/?size=140x140&margin=8&data=' + encodeURIComponent(payload);
         qrBox.innerHTML = '<img src="' + url + '" width="140" height="140" alt="QR" style="display:block;margin:0 auto;border-radius:8px" onerror="this.parentNode.innerHTML=\'<span class=\\\'text-xs text-slate-400\\\'>تعذر إنشاء QR</span>\'">';
       }
-
       document.getElementById('memberDetailsModal').classList.remove('hide');
     }
 
@@ -830,10 +829,10 @@
     function exportCSV() {
       const rows = filteredMembers;
       if (!rows.length) { alert('لا توجد بيانات للتصدير'); return; }
-      const headers = ['الرقم','الاسم واللقب','العمر','تاريخ الميلاد','مكان الميلاد','الإقامة','الهاتف','البريد','المستوى','التخصص','المهنة','تاريخ التسجيل'];
+      const headers = ['الرقم','الاسم واللقب','العمر','تاريخ الميلاد','مكان الميلاد','الإقامة','الهاتف','البريد','المستوى','التخصص','المهنة','القطاع','تاريخ التسجيل'];
       const lines = [headers.join(',')];
       rows.forEach(m => {
-        const cols = [m.id, m.fullName, m.age, m.birthDate, m.birthPlace, m.wilaya, m.phone, m.email, m.education, m.specialty, m.job, formatDate(m.timestamp)];
+        const cols = [m.id, m.fullName, m.age, m.birthDate, m.birthPlace, m.wilaya, m.phone, m.email, m.education, m.specialty, m.job, m.sector, formatDate(m.timestamp)];
         lines.push(cols.map(csvEscape).join(','));
       });
       const bom = '\uFEFF';
@@ -858,6 +857,7 @@
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
     }
+
     function formatDate(v) {
       if (!v) return '—';
       try {
